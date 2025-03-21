@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import emailjs from '@emailjs/browser';
 import { 
   BookOpen, 
   Code2, 
@@ -14,7 +15,7 @@ import {
   X,
   LineChart,
   Settings,
-  Workflow
+  TrendingUp
 } from 'lucide-react';
 
 const Navigation = () => {
@@ -26,7 +27,7 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <LineChart className="h-8 w-8 text-primary-orange" />
-            <span className="ml-2 text-xl font-bold font-poppins">Power BI Master</span>
+            <span className="ml-2 text-xl font-bold font-poppins">Power BI MasterClass</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -57,9 +58,11 @@ const Navigation = () => {
             <a href="#path" className="block px-3 py-2 text-primary-black hover:text-primary-orange">Trilha de Aprendizado</a>
             <a href="#prerequisites" className="block px-3 py-2 text-primary-black hover:text-primary-orange">Pré-requisitos</a>
             <a href="#modules" className="block px-3 py-2 text-primary-black hover:text-primary-orange">Módulos</a>
+            <a href="https://github.com/Dlaranjo/trilha-pbi" target="_blank" rel="noopener noreferrer">
             <button className="w-full mt-4 bg-primary-orange text-white px-6 py-2 rounded-full hover:bg-primary-black transition-colors">
               Começar Agora
             </button>
+          </a>
           </div>
         </div>
       )}
@@ -86,40 +89,75 @@ const FadeInSection = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  const [isOpen, setIsOpen] = useState(false);
   const [activeModule, setActiveModule] = useState<number | null>(null);
+  const [formStatus, setFormStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const modules = [
     {
       title: "Personalização Avançada de Temas",
       description: "Domine a criação e implementação de temas personalizados usando JSON no Power BI.",
-      duration: "2 semanas",
-      topics: ["Estrutura JSON de Temas", "Paletas de Cores", "Formatação Condicional", "Temas Corporativos"]
+      duration: "2 horas",
+      topics: ["Estrutura JSON de Temas", "Documentação da Estrutura", "Implementando Temas"]
     },
     {
       title: "SVG no Power BI",
-      description: "Aprenda a criar e implementar gráficos vetoriais escaláveis no Power BI.",
-      duration: "2 semanas",
-      topics: ["Criação de SVGs", "Implementação no Power BI", "Ícones Personalizados", "Visualizações Interativas"]
+      description: "Aprenda a criar e implementar SVGs para visualizações no Power BI.",
+      duration: "2 horas",
+      topics: ["Criação de SVGs", "Animações em SVGs", "Ícones Personalizados", "Visualizações Customizadas"]
     },
     {
       title: "Parâmetros e Visualizações Dinâmicas",
-      description: "Explore o uso avançado de parâmetros para criar relatórios dinâmicos.",
-      duration: "3 semanas",
-      topics: ["Parâmetros Avançados", "Visualizações Dinâmicas", "Filtros Complexos", "Bookmarks"]
+      description: "Explore o uso avançado de parâmetros para gerar flexibilidade em seus relatórios.",
+      duration: "1 hora",
+      topics: ["Parâmetros Avançados", "Visualizações Dinâmicas", "Relacionamentos Entre Parâmetros"]
     },
     {
       title: "Grupos de Cálculo",
-      description: "Aprenda a criar e gerenciar grupos de cálculo eficientes no Power BI.",
-      duration: "2 semanas",
-      topics: ["Fundamentos", "Implementação Prática", "Otimização", "Casos de Uso"]
+      description: "Aprenda a criar e usar grupos de cálculo de maneira eficientes no Power BI.",
+      duration: "1 hora",
+      topics: ["Fundamentos em Grupos de Cálculo", "Implementação Prática", "Casos de Uso"]
     },
     {
       title: "Engenharia de Dados com Airflow",
-      description: "Domine os fundamentos de engenharia de dados usando Apache Airflow.",
-      duration: "4 semanas",
-      topics: ["Pipelines de Dados", "DAGs", "Operadores", "Monitoramento"]
+      description: "Conheça um caso prático de aplicação do Apache Airflow e do Apache Spark em uma arquitetura de ETL robusta.",
+      duration: "2 horas",
+      topics: ["Arquitetura de Processos ETL", "Pipelines de Dados", "Apache Airflow", "Apache Spark"]
     }
   ];
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    const form = e.currentTarget;
+    
+    try {
+      await emailjs.sendForm(
+        'service_your_service_id',
+        'template_your_template_id',
+        form,
+        'your_public_key'
+      );
+      
+      setFormStatus({
+        type: 'success',
+        message: 'Mensagem enviada com sucesso! Entraremos em contato em breve.'
+      });
+      form.reset();
+    } catch (error) {
+      setFormStatus({
+        type: 'error',
+        message: 'Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -135,7 +173,7 @@ function App() {
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-6xl font-bold text-white font-poppins mb-6"
             >
-              Domine o Power BI e Engenharia de Dados
+              Domine o Power BI e Conheça a Engenharia de Dados
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0 }}
@@ -143,7 +181,7 @@ function App() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-lg md:text-xl text-white/90 mb-8"
             >
-              Trilha avançada para dominar visualização de dados e engenharia de dados
+              Trilha avançada para dominar visualização de dados e introduzir a engenharia de dados
             </motion.p>
             <a href="https://github.com/Dlaranjo/trilha-pbi" target="_blank" rel="noopener noreferrer">
             <motion.button 
@@ -169,17 +207,17 @@ function App() {
               <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                 <Settings className="w-12 h-12 text-primary-orange mb-4" />
                 <h3 className="text-xl font-bold mb-4">Personalização Avançada</h3>
-                <p className="text-gray-600">Aprenda a criar temas personalizados e visualizações únicas no Power BI</p>
+                <p className="text-gray-600">Aprenda a tornar a ferramenta do Power BI ainda mais flexivel para o processo de geração de valor</p>
+              </div>
+              <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <TrendingUp className="w-12 h-12 text-primary-orange mb-4" />
+                <h3 className="text-xl font-bold mb-4">Aumento de Produtividade</h3>
+                <p className="text-gray-600">Domine as funcionalidades avançadas do Power BI e maximize sua produtividade com técnicas eficientes e práticas</p>
               </div>
               <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                 <Database className="w-12 h-12 text-primary-orange mb-4" />
                 <h3 className="text-xl font-bold mb-4">Engenharia de Dados</h3>
-                <p className="text-gray-600">Domine pipelines de dados e automação com Apache Airflow</p>
-              </div>
-              <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                <Workflow className="w-12 h-12 text-primary-orange mb-4" />
-                <h3 className="text-xl font-bold mb-4">Fluxos de Trabalho</h3>
-                <p className="text-gray-600">Crie soluções completas de análise de dados e automação</p>
+                <p className="text-gray-600">Entenda como a Engenharia de Dados pode ser aplicada na prática para resolver desafios complexos de análise de dados</p>
               </div>
             </div>
           </FadeInSection>
@@ -218,8 +256,8 @@ function App() {
               <div className="flex items-start space-x-4">
                 <CheckCircle2 className="w-6 h-6 text-primary-orange flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold mb-2">Estrutura do Power BI</h3>
-                  <p className="text-gray-600">Conhecimento básico da estrutura de relatórios</p>
+                  <h3 className="font-semibold mb-2">Conhecimentos em Power BI</h3>
+                  <p className="text-gray-600">Conhecimento básico dos recursos no Power BI</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
@@ -232,15 +270,15 @@ function App() {
               <div className="flex items-start space-x-4">
                 <CheckCircle2 className="w-6 h-6 text-primary-orange flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold mb-2">SQL Básico</h3>
-                  <p className="text-gray-600">Conhecimento de consultas SQL fundamentais</p>
+                  <h3 className="font-semibold mb-2">JSON</h3>
+                  <p className="text-gray-600">Compreensão básica da estrutura JSON</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
                 <CheckCircle2 className="w-6 h-6 text-primary-orange flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold mb-2">JSON</h3>
-                  <p className="text-gray-600">Compreensão básica da estrutura JSON</p>
+                  <h3 className="font-semibold mb-2">Interesse em Dados</h3>
+                  <p className="text-gray-600">Desejo de aprofundar na área de Dados</p>
                 </div>
               </div>
             </div>
@@ -292,21 +330,23 @@ function App() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 font-poppins">Entre em Contato</h2>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                <label htmlFor="from_name" className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
                 <input
                   type="text"
-                  id="name"
+                  id="from_name"
+                  name="from_name"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-orange focus:border-primary-orange"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <label htmlFor="reply_to" className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
                 <input
                   type="email"
-                  id="email"
+                  id="reply_to"
+                  name="reply_to"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-orange focus:border-primary-orange"
                   required
                 />
@@ -315,16 +355,29 @@ function App() {
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
                 <textarea
                   id="message"
+                  name="message"
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-orange focus:border-primary-orange"
                   required
                 ></textarea>
               </div>
+              
+              {formStatus.type && (
+                <div className={`p-4 rounded-md ${
+                  formStatus.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                }`}>
+                  {formStatus.message}
+                </div>
+              )}
+              
               <button
                 type="submit"
-                className="w-full bg-primary-orange text-white px-6 py-3 rounded-md hover:bg-primary-black transition-colors font-semibold"
+                disabled={isSubmitting}
+                className={`w-full bg-primary-orange text-white px-6 py-3 rounded-md hover:bg-primary-black transition-colors font-semibold ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                Enviar Mensagem
+                {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
               </button>
             </form>
           </FadeInSection>
