@@ -152,7 +152,8 @@ function App() {
         setFormStatus({ type: "success", message: "Mensagem enviada com sucesso!" });
         form.reset();
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Erro ao enviar mensagem:", error); // Exibe o erro no console
         setFormStatus({ type: "error", message: "Erro ao enviar a mensagem." });
       })
       .finally(() => setIsSubmitting(false));
