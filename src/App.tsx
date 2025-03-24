@@ -135,28 +135,28 @@ function App() {
     setIsSubmitting(true);
     
     const form = e.currentTarget;
-    
-    try {
-      await emailjs.sendForm(
-        'service_your_service_id',
-        'template_your_template_id',
-        form,
-        'your_public_key'
-      );
-      
-      setFormStatus({
-        type: 'success',
-        message: 'Mensagem enviada com sucesso! Entraremos em contato em breve.'
-      });
-      form.reset();
-    } catch (error) {
-      setFormStatus({
-        type: 'error',
-        message: 'Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente.'
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+
+    const formData = {
+      from_name: form.from_name.value,
+      reply_to: form.reply_to.value,
+      message: form.message.value,
+    };
+
+    const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    emailjs
+      .send(serviceID, templateID, formData, publicKey)
+      .then(() => {
+        setFormStatus({ type: "success", message: "Mensagem enviada com sucesso!" });
+        form.reset();
+      })
+      .catch((error) => {
+        console.error("Erro ao enviar mensagem:", error); // Exibe o erro no console
+        setFormStatus({ type: "error", message: "Erro ao enviar a mensagem." });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
