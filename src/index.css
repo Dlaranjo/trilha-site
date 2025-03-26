@@ -6,12 +6,16 @@
 
 :root {
   --primary-orange: #E66C37;
-  --primary-black: #1C2325;
+  --primary-black: #51161d;
   --white: #FFFFFF;
   --gradient: linear-gradient(135deg, var(--primary-orange), var(--primary-black));
 }
 
 @layer base {
+  body {
+    @apply font-poppins antialiased;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', sans-serif;
@@ -26,8 +30,63 @@
   }
 }
 
-.gradient-bg {
-  background: var(--gradient);
+@layer components {
+  .gradient-bg {
+    background: var(--gradient);
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  .nav-link {
+    @apply relative text-primary-black hover:text-primary-orange transition-colors;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-primary-orange transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .button-primary {
+    @apply bg-primary-orange text-white px-6 py-2 rounded-full 
+           transition-all duration-300 
+           hover:shadow-lg hover:-translate-y-0.5 hover:bg-primary-black;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-center mb-16 font-poppins 
+           bg-gradient-to-r from-primary-black to-primary-orange bg-clip-text text-transparent;
+    background: var(--primary-orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-orange/30 rounded-full hover:bg-primary-orange/50 transition-colors;
+}
+
+/* Smooth Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Modern Focus Styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary-orange ring-offset-2;
 }
 
 .text-gradient {
