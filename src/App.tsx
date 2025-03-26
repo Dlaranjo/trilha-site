@@ -347,7 +347,7 @@ function App() {
                 className="w-64 h-64 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 shadow-xl"
               >
                 <img 
-                  src="./utils/foto1.jpg" 
+                  src="../utils/foto1.jpg" 
                   alt="Foto do Instrutor" 
                   className="w-full h-full object-cover"
                 />
